@@ -16,23 +16,31 @@ import CreateIcon from '@material-ui/icons/Create';
 import MoviesDialog from '../MoviesDialog/MoviesDialog';
 
 import withHocs from './MoviesTableHoc';
-
-const movies = [
-    { id: 1, name: 'Pulp Fiction', genre: 'Crime', rate: 10, director: { name: 'Quentin Tarantino' }, watched: true },
-    {
-        id: 2,
-        name: 'Lock, Stock and Two Smoking Barrels',
-        genre: 'Crime-comedy',
-        rate: 9,
-        director: { name: 'Guy Ritchie' },
-        watched: false,
-    },
-];
+import MoviesSearch from '../MoviesSearch/MoviesSearch';
 
 class MoviesTable extends React.Component {
     state = {
         anchorEl: null,
         openDialog: false,
+        name: '',
+    };
+
+    handleChange = name => (event) => {
+        this.setState({
+            [name]: event.target.value,
+        });
+    };
+
+    handleSearch = e => {
+        if(e.charCode !== 13) return;
+
+        const { data } = this.props;
+        const { name } = this.state;
+
+        data.fetchMore({
+            variables: { name },
+            updateQuery: (prevResult, { fetchMoreResult }) => fetchMoreResult,
+        });
     };
 
     handleDialogOpen = () => { this.setState({ openDialog: true }); };
@@ -58,16 +66,23 @@ class MoviesTable extends React.Component {
     };
 
     render() {
-        const { anchorEl, openDialog, data: activeElem = {} } = this.state;
+        const { anchorEl, openDialog, data: activeElem = {}, name } = this.state;
 
         const { classes, data } = this.props;
 
         const { movies = [] } = data;
 
 
-
         return (
             <>
+                <Paper>
+                    <MoviesSearch
+                        name={name}
+                        handleSearch={this.handleSearch}
+                        handleChange={this.handleChange}
+                    />
+                </Paper>
+                <br />
                 <MoviesDialog open={openDialog} handleClose={this.handleDialogClose} id={activeElem.id} />
                 <Paper className={classes.root}>
                     <Table>

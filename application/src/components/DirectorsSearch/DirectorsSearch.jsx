@@ -7,21 +7,24 @@ import withHocs from './DirectorsSearchHoc';
 class DirectorsSearch extends React.Component {
 
   render() {
-    const { classes } = this.props;
+    const { classes, name, handleChange, handleSearch } = this.props;
 
     return (
-      <div className={classes.search}>
-        <div className={classes.searchIcon}>
-          <SearchIcon />
+        <div className={classes.search}>
+            <div className={classes.searchIcon}>
+                <SearchIcon />
+            </div>
+            <InputBase
+                value={name}
+                onChange={handleChange('name')}
+                onKeyPress={(e) => handleSearch(e)}
+                placeholder="Search…"
+                classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                }}
+            />
         </div>
-        <InputBase
-          placeholder="Search…"
-          classes={{
-            root: classes.inputRoot,
-            input: classes.inputInput,
-          }}
-        />
-      </div>
     );
   }
 };
